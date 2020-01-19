@@ -61,34 +61,34 @@ class Game {
         this.timer++;
         if(this.timer % 1 == 0){
             let res = this.moveBlockDown();
-            console.log(res);
             if(res == "gameOver"){
-                clearInterval(this.interval);
                 this.gameOver();
             } else if(res == "landed") {
-                this.clearFullRows();
+                this.clearFullRows(1);
                 this.spawn();
                 this.score += 10;
             }
         }
         document.querySelector('#title').innerHTML = this.score.toString();
+        console.log(this.score)
     }
 
     gameOver(){
+        clearInterval(this.interval);
         document.querySelector('#btn-start').style.display = 'block';
     }
 
-    clearFullRows(){
+    clearFullRows(scoreMultiplier){
         for(let i = this.board.length-1; i>0; i--)
             if(this.board[i].every(c=>c.style.backgroundColor))
-                this.removeRow(i);
+                this.removeRow(i, scoreMultiplier);
     }
     
-    removeRow(index){
-        this.score+=200;
+    removeRow(index, scoreMultiplier){
+        this.score += scoreMultiplier * scoreMultiplier * 200;
         for(let i=index; i>0; i--)
             this.board[i].forEach((c,j)=>c.style.backgroundColor = this.board[i-1][j].style.backgroundColor);
-        this.clearFullRows();
+        this.clearFullRows(++scoreMultiplier);
     }
 
     refreshCurrentBlock(op){
@@ -126,7 +126,8 @@ class Game {
         let res = '';
         while(res != 'landed')
             res = this.moveBlockDown();
-        this.clearFullRows();
+        this.score += 10;
+        this.clearFullRows(0);
         this.spawn();
     }
 }
