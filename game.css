@@ -1,14 +1,15 @@
-.cell {
-    border-right:1px solid lightgray;
-    border-bottom:1px solid lightgray;
-    height: 30px;
-}
-
 #game-container {
     display: grid;
     grid-template-columns: 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px;
     border-left:1px solid lightgray;
     border-top:1px solid lightgray;
+    width:fit-content;
+}
+
+.cell {
+    border-right:1px solid lightgray;
+    border-bottom:1px solid lightgray;
+    height: 30px;
 }
 
 #btn-start {
