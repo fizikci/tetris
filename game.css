@@ -1,3 +1,9 @@
+#title {
+    width:300px;
+    font-weight:bold;
+    text-align: right;
+    font-size:50px
+}
 #game-container {
     display: grid;
     grid-template-columns: 30px 30px 30px 30px 30px 30px 30px 30px 30px 30px;
@@ -13,10 +19,13 @@
 }
 
 #btn-start {
-    margin:20px;
-    background: red;
+    position:absolute;
+    background: green;
     color:white;
     border:none;
     padding:20px;
     cursor: pointer;
+    font-size:60px;
+    top:100px;
+    left:50px;
 }

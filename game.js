@@ -4,6 +4,7 @@ class Game {
         this.rows = rows;
         this.timer = -1;
         this.color = colors[Math.floor(Math.random()*colors.length)];
+        this.score = 0;
         var container = document.querySelector('#game-container');
         let txt = '';
         for(let i=0; i<this.rows; i++)
@@ -24,6 +25,7 @@ class Game {
 
         this.spawn();
         this.interval = setInterval(this.update.bind(this), 200);
+        document.querySelector('#btn-start').style.display = 'none';
     }
 
     spawn(){
@@ -62,12 +64,18 @@ class Game {
             console.log(res);
             if(res == "gameOver"){
                 clearInterval(this.interval);
-                //this.gameOver();
+                this.gameOver();
             } else if(res == "landed") {
                 this.clearFullRows();
                 this.spawn();
+                this.score += 10;
             }
         }
+        document.querySelector('#title').innerHTML = this.score.toString();
+    }
+
+    gameOver(){
+        document.querySelector('#btn-start').style.display = 'block';
     }
 
     clearFullRows(){
@@ -77,6 +85,7 @@ class Game {
     }
     
     removeRow(index){
+        this.score+=200;
         for(let i=index; i>0; i--)
             this.board[i].forEach((c,j)=>c.style.backgroundColor = this.board[i-1][j].style.backgroundColor);
         this.clearFullRows();
@@ -155,7 +164,7 @@ class Block {
     }
 }
 
-const colors = ['red','green','blue','yellow','magenta','brown','orange']
+const colors = ['red','crimson','darkgray','brown','orange']
 
 const blocks = {
     "I": [
