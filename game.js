@@ -3,6 +3,7 @@ class Game {
         this.columns = columns;
         this.rows = rows;
         this.timer = -1;
+        this.color = colors[Math.floor(Math.random()*colors.length)];
         var container = document.querySelector('#game-container');
         let txt = '';
         for(let i=0; i<this.rows; i++)
@@ -26,6 +27,7 @@ class Game {
     }
 
     spawn(){
+        this.color = colors[Math.floor(Math.random()*colors.length)];
         this.currentBlock = new Block();
     }
 
@@ -46,11 +48,11 @@ class Game {
         try{newCells = this.getCurrentBlockCells();} catch{return "landed"}
         oldCells.forEach(c=>c.style.backgroundColor = '');
         if(newCells.some(c=>c.style.backgroundColor)){
-            oldCells.forEach(c=>c.style.backgroundColor = 'red');
+            oldCells.forEach(c=>c.style.backgroundColor = this.color);
             this.currentBlock.y--;
             return this.currentBlock.y<=0 ? "gameOver" : "landed";
         }
-        newCells.forEach(c=>c.style.backgroundColor = 'red');
+        newCells.forEach(c=>c.style.backgroundColor = this.color);
     }
 
     update(){
@@ -62,10 +64,22 @@ class Game {
                 clearInterval(this.interval);
                 //this.gameOver();
             } else if(res == "landed") {
-                //this.clearFullRows();
+                this.clearFullRows();
                 this.spawn();
             }
         }
+    }
+
+    clearFullRows(){
+        for(let i = this.board.length-1; i>0; i--)
+            if(this.board[i].every(c=>c.style.backgroundColor))
+                this.removeRow(i);
+    }
+    
+    removeRow(index){
+        for(let i=index; i>0; i--)
+            this.board[i].forEach((c,j)=>c.style.backgroundColor = this.board[i-1][j].style.backgroundColor);
+        this.clearFullRows();
     }
 
     refreshCurrentBlock(op){
@@ -77,9 +91,9 @@ class Game {
         if(newCells.some(c=>c.style.backgroundColor)){
             this.currentBlock.x = oldValues[0];
             this.currentBlock.turn = oldValues[1];
-            oldCells.forEach(c=>c.style.backgroundColor = 'red');
+            oldCells.forEach(c=>c.style.backgroundColor = this.color);
         } else {
-            newCells.forEach(c=>c.style.backgroundColor = 'red');
+            newCells.forEach(c=>c.style.backgroundColor = this.color);
         }
     }
 
@@ -91,13 +105,20 @@ class Game {
 
     moveLeft(){
         this.refreshCurrentBlock(function(){
-            this.currentBlock.x = Math.max(--this.currentBlock.x, 0);
+            this.currentBlock.x = Math.max(--this.currentBlock.x, 0-this.currentBlock.getFullStart());
         });
     }
     moveRight(){
         this.refreshCurrentBlock(function(){
             this.currentBlock.x = Math.min(++this.currentBlock.x, this.columns - this.currentBlock.getFullWidth());
         });
+    }
+    land(){
+        let res = '';
+        while(res != 'landed')
+            res = this.moveBlockDown();
+        this.clearFullRows();
+        this.spawn();
     }
 }
 
@@ -123,7 +144,18 @@ class Block {
                 if(s[i][j] && j>m) m = j;
         return m+1;
     }
+
+    getFullStart(){
+        let s = this.getShape();
+        let m = 10;
+        for(let i=0; i<s.length; i++)
+            for(let j=0; j<s[i].length; j++)
+                if(s[i][j] && j<m) m = j;
+        return m;
+    }
 }
+
+const colors = ['red','green','blue','yellow','magenta','brown','orange']
 
 const blocks = {
     "I": [
@@ -171,8 +203,12 @@ function rotate(matrix){
     }
 }
 
+var game;
 
-var game = new Game();
+document.querySelector('#btn-start').addEventListener('click',function(){
+    game = new Game();
+    game.start();
+});
 
 document.onkeydown = function (e) {
     e = e || window.event;
