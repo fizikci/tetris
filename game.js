@@ -127,7 +127,7 @@ class Game {
         while(res != 'landed')
             res = this.moveBlockDown();
         this.score += 10;
-        this.clearFullRows(0);
+        this.clearFullRows(1);
         this.spawn();
     }
 }
