@@ -232,13 +232,19 @@ document.onkeydown = function (e) {
         game.moveRight();    
 };
 
-document.ontouchmove = function (e) {
+var touchStart = null;
+document.ontouchstart = function (e) {
     e = e || window.event;
-    let start = e.touches[0], end = e.touches[e.touches.length-1];
+    touchStart = e.changedTouches[0];
+}
+document.ontouchend = function (e) {
+    e = e || window.event;
+    let start = touchStart, end = e.changedTouches[0];
     let dx = end.screenX - start.screenX, dy = end.screenY - start.screenY;
     let adx = Math.abs(dx), ady = Math.abs(dy);
+
     if(Math.abs(adx-ady)<10) return;
-    
+
     if(ady > adx){
         if(dy<0) // up
             game.turn();
