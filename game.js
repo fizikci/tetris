@@ -231,3 +231,23 @@ document.onkeydown = function (e) {
     else if(e.key == 'ArrowRight')
         game.moveRight();    
 };
+
+document.ontouchmove = function (e) {
+    e = e || window.event;
+    let start = e.touches[0], end = e.touches[e.touches.length-1];
+    let dx = end.screenX - start.screenX, dy = end.screenY - start.screenY;
+    let adx = Math.abs(dx), ady = Math.abs(dy);
+    if(Math.abs(adx-ady)<10) return;
+    
+    if(ady > adx){
+        if(dy<0) // up
+            game.turn();
+        else // down
+            game.land();
+    } else {
+        if(dx<0) // left
+            game.moveLeft();
+        else // right
+            game.moveRight();
+    }
+};
