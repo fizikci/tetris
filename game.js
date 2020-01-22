@@ -23,14 +23,21 @@ class Game {
             this.board.push(row);
         }
 
+        this.randomizeNextBlock();
         this.spawn();
         this.interval = setInterval(this.update.bind(this), 200);
         document.querySelector('#btn-start').style.display = 'none';
     }
 
+    randomizeNextBlock(){
+        this.nextBlock = [colors[Math.floor(Math.random()*colors.length)],new Block()];
+        let preview = '<table>'+this.nextBlock[1].getShape().map(r=>'<tr>'+r.map(c=>'<td'+(c?' style="background-color:'+this.nextBlock[0]+'"':'')+'></td>').join('')+'</tr>').join('')+'</table>';
+        document.querySelector('#preview').innerHTML = preview;
+    }
     spawn(){
-        this.color = colors[Math.floor(Math.random()*colors.length)];
-        this.currentBlock = new Block();
+        this.color = this.nextBlock[0];
+        this.currentBlock = this.nextBlock[1];
+        this.randomizeNextBlock();
     }
 
     getCurrentBlockCells(){
@@ -69,7 +76,7 @@ class Game {
                 this.score += 10;
             }
         }
-        document.querySelector('#title').innerHTML = this.score.toString();
+        document.querySelector('#score').innerHTML = this.score.toString();
         console.log(this.score)
     }
 
